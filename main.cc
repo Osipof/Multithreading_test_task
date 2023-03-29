@@ -1,17 +1,16 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
-#include <thread>
 #include <functional>
+#include <iostream>
+#include <thread>
+#include <vector>
 
 const int kThreshold = 10;
 
-auto func(double x) {
-  return x * 3;
-}
+auto func(double x) { return x * 3; }
 
 template <typename T, typename R>
-std::vector<R> SplitWork(const std::vector<T> &input_vector, std::function<R(T)> convert_func) {
+std::vector<R> SplitWork(const std::vector<T> &input_vector,
+                         std::function<R(T)> convert_func) {
   std::vector<R> result(input_vector.size());
 
   // In this case, parallelism is not used
@@ -23,7 +22,6 @@ std::vector<R> SplitWork(const std::vector<T> &input_vector, std::function<R(T)>
   }
 
   int number_of_threads = std::thread::hardware_concurrency();
-//   std::cout << "NUMBER OF THREADS = " << number_of_threads << std::endl;
   int chunk_size = input_vector.size() / number_of_threads;
   std::vector<std::thread> threads;
 
@@ -33,7 +31,9 @@ std::vector<R> SplitWork(const std::vector<T> &input_vector, std::function<R(T)>
       chunk_size = input_vector.size() - start;
     }
     threads.emplace_back([=, &result]() {
-      std::transform(input_vector.begin() + start, input_vector.begin() + start + chunk_size, result.begin() + start, func);
+      std::transform(input_vector.begin() + start,
+                     input_vector.begin() + start + chunk_size,
+                     result.begin() + start, func);
     });
   }
 
